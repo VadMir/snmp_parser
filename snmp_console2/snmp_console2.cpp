@@ -20,7 +20,29 @@ unsigned char mas[]{
 };
 std::string tab="\t";
 
-void getval(unsigned char* el, unsigned char type, unsigned len) {
+void ber_sequence_parse(unsigned char *el,int length, void *value) {
+	int count = 0;
+	int pos = 0;
+	value =((BER*) malloc(10*sizeof(BER)));
+	while (pos<length-1) {
+		BER* b = new BER(el + pos);
+		*((BER*)value+count) = *b;
+		count++;
+		if (count>8)
+		{
+			realloc(value, count + 10);
+		}
+		pos += b->length + b->len_offset + 1;
+//		delete b;
+	}
+//	value = (BER*)malloc(count);
+	//memcpy(value, bers, count);
+		
+	//delete bers;
+
+}
+
+/*void getval(unsigned char* el, unsigned char type, unsigned len) {
 
 	switch (type) {
 	case 0x02: {
@@ -76,10 +98,10 @@ void getval(unsigned char* el, unsigned char type, unsigned len) {
 	//case 0xA7: cout << tab << "Trap "; break;
 	//case 0xA8: cout << tab << "Report"; break;
 
-	default: cout << tab << "UNKNOWN"; break;
+	//default: /*cout << tab << "UNKNOWN"; break;
 	}
-}
-void rec(unsigned char* el,unsigned pos, unsigned size) {
+}*/
+/*void rec(unsigned char* el,unsigned pos, unsigned size) {
 	if (pos >= size) 
 		return;
 	unsigned length = (unsigned)(*(el + 1));
@@ -138,14 +160,14 @@ void rec(unsigned char* el,unsigned pos, unsigned size) {
 	}
 	tab = tab.substr(0, tab.size() - 1);
 }
-
+*/
 int main()
 {
-	for (size_t i = 0; i < 1000000; i++)
+	/*for (size_t i = 0; i < 1000000; i++)
 	{
 		rec(&mas[0],0,sizeof(mas));
-	}
-	
+	}*/
+	BER* ber = new BER(&mas[0]);
 	/*for each (unsigned char i in mas)
 	{
 		cout << (short)i <<endl;
@@ -153,6 +175,7 @@ int main()
 	*/
 	cout << "ok";
 	getchar();
+	delete ber;
     return 0;
 }
 

@@ -9,6 +9,7 @@
 	 unsigned char type;
 	 unsigned length;
 	 void* value;
+	 short len_offset;
 
 };
 
