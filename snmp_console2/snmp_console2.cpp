@@ -21,7 +21,7 @@ unsigned char mas[]{
 std::string oid = "1.3.6.1.4.1.9585.1.0";
 
 
-std::string tab="\t";
+//std::string tab="\t";
 std::vector<std::string> split(std::string strToSplit, char delimeter)
 {
 	std::stringstream ss(strToSplit);
@@ -64,29 +64,20 @@ vector<unsigned char> oid_parse(string oid) {
 	return val;
 }
 
-short ber_sequence_parse(unsigned char *el,int length, void **value) {
+short ber_sequence_parse(unsigned char *el,int length, void *value,std::string tab) {
 	int count = 0;
 	int pos = 0;
-	*value =((BER*) malloc(10*sizeof(BER)));
+	vector<BER*> bers; 
 	while (pos<length-1) {
-		BER* b = new BER(el + pos);
-		*((BER*)*value +count) = *b;
+		
+		bers.push_back(new BER(el + pos, tab));
+		
 		count++;
-		if (count>8)
-		{
-			realloc(value, count + 10);
-		}
-		pos += b->length + b->len_offset + 1;
-//		delete b;
+		
+		pos += bers.back()->length + bers.back()->len_offset + 1;
+		
 	}
-	//value = (BER*)malloc(count);
-	//memcpy(value, bers, count);
-	/*for (size_t i = 0; i < count; i++)
-	{
-		//((BER*)bers + i)->CLEAN();
-		((BER*)bers + i)->~BER();
-	}
-	free(bers);*/
+	value = &bers;
 	return count;
 }
 
@@ -213,7 +204,7 @@ int main()
 {
 	for (size_t i = 0; i < 100000; i++)
 	{
-		BER* ber = new BER(&mas[0]);
+		BER* ber = new BER(&mas[0],"\t");
 		//ber->CLEAN();
 		ber->~BER();
 	}

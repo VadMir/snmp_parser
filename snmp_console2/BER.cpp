@@ -3,60 +3,59 @@
 
 #include "stdafx.h"
 
-BER::BER(unsigned char* el) {
+BER::BER(unsigned char* el,string tab) {
+	t= "\t"+tab;
 	type = *el;
 	length = *(el + 1);
 	len_offset = 1;
 	if (length > 127) {
 		len_offset = length - 127;
-		unsigned char* t = new unsigned char[sizeof(int)];
-		memset(t, 0, sizeof(int));
-		memcpy(t, el, len_offset);
-		reverse(t, t + len_offset);
-		length = *(int*)t;
+		unsigned char* i = new unsigned char[sizeof(int)];
+		memset(i, 0, sizeof(int));
+		memcpy(i, el, len_offset);
+		reverse(i, i + len_offset);
+		length = *(int*)i;
 	}
 
 
 	switch (*el) {
-	case 0x02: //cout << tab << "INTEGER" << endl << tab;
+	case 0x02: 
 	{
-		unsigned char* t = new unsigned char[sizeof(int)];
-		memset(t, 0, sizeof(int));
-		memcpy(t, el+ len_offset+1, length);
-		reverse(t, t + length);
-		int i = (*(int*)t);
-		value = &i;
-		//value = (void*)t;
-		//cout << (*(int*)t);
-		delete t;
+		unsigned char* i = new unsigned char[sizeof(int)];
+		memset(i, 0, sizeof(int));
+		memcpy(i, el+ len_offset+1, length);
+		reverse(i, i + length);
+		int in = (*(int*)i);
+		value = &in;
+		
+		delete i;
+		//cout << t << "INTEGER	" << *(int*)value<< endl ;
 		break;
 	}
-	case 0x04: //cout << tab << "OCTET STRING" << endl << tab; 
+	case 0x04:  
 	{
-		value = new unsigned char[length + 2];
+		value = (unsigned char*)malloc((length + 2)* sizeof(unsigned char));
 		memset(value, 0, length + 2);
 		memcpy(value, el+ len_offset+1, length);
-		//	cout << t; 
-		//value = (void*)t;
-		//delete t;
+		//cout << t << "OCTET STRING	" << (unsigned char*)value<<endl;
 		break;
 	}
 	case 0x06: //cout << tab << "OBJECT IDENTIFIER" << endl << tab;
 	{
-		unsigned char* t = new unsigned char[length];
-		memset(t, 0, length);
-		memcpy(t, el+ len_offset+1, length);
-	/*	for (ptrdiff_t i = 0; i < length; i++)
+		value = (unsigned char*)malloc((length ) * sizeof(unsigned char));
+		memset(value, 0, length);
+		memcpy(value, el+ len_offset+1, length);
+		/*cout << t << "OBJECT IDENTIFIER	";
+		for (ptrdiff_t i = 0; i < length; i++)
 		{
-			if ((short)*(t + i) == 0x2b) {
-				//	cout <<  "1.3.";
+			if ((short)*((unsigned char*)value + i) == 0x2b) {
+					cout <<  "1.3.";
 			}
 			else {
-				//	cout << (short)*(t + i) << ".";
+					cout << (short)*((unsigned char*)value + i) << ".";
 			}
-		}*/
-		value = t;
-		delete t;
+		}
+		cout << endl;*/
 		break; 
 	}
 	case 0x05: //cout << tab << "NULL"; 
@@ -64,8 +63,10 @@ BER::BER(unsigned char* el) {
 		break;
 	case 0x30: //cout << tab << "SEQUENCE";
 	{
+		//cout <<t<< "SEQUENCE			" << count << endl;
 
-		count= ber_sequence_parse(el + len_offset+1,length,&value);
+		count= ber_sequence_parse(el + len_offset+1,length,value,t);
+		//cout <<t<< "SEQUENCE			" << count << endl;
 		break;
 
 		
@@ -84,6 +85,9 @@ BER::BER(unsigned char* el) {
 	case 0xA1: //cout << tab << "GetNextRequest";
 		break;
 	case 0xA2: //cout << tab << "Response";
+		//cout << t << "RESPONSE			" << count << endl;
+	//	count = ber_sequence_parse(el + len_offset + 1, length, value,t);
+		//cout << t << "RESPONSE			" << count << endl;
 		break;
 	case 0xA3: //cout << tab << "SetRequest"; 
 		break;

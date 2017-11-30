@@ -13,4 +13,5 @@
 #include <iostream>
 using namespace std;
 // TODO: reference additional headers your program requires here
-short ber_sequence_parse(unsigned char *el, int length, void** value);
+short ber_sequence_parse(unsigned char *el, int length, void* value,std::string tab);
+std::string tab = "\t";
