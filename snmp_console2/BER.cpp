@@ -64,7 +64,8 @@ BER::BER(unsigned char* el) {
 		break;
 	case 0x30: //cout << tab << "SEQUENCE";
 	{
-		ber_sequence_parse(el + len_offset+1,length,value);
+
+		count= ber_sequence_parse(el + len_offset+1,length,&value);
 		break;
 
 		
@@ -99,9 +100,22 @@ BER::BER(unsigned char* el) {
 		break;
 	}
 
+
+
+
+}
+void BER::CLEAN() {
+	
 }
 
 BER::~BER()
 {
+	if ((type == 0x30)&&(type == 0xA2)) {
+		for (size_t i = 0; i < count; i++)
+		{
+			((BER*)value + i)->~BER();
+		}
+		free(value);
+	}
 	delete value;
 }

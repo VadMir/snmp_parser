@@ -13,4 +13,4 @@
 #include <iostream>
 using namespace std;
 // TODO: reference additional headers your program requires here
-void ber_sequence_parse(unsigned char *el, int length, void* value);
+short ber_sequence_parse(unsigned char *el, int length, void** value);

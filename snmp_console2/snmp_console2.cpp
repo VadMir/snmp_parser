@@ -2,7 +2,10 @@
 //
 
 #include "stdafx.h"
+#include <iostream>
+#include <sstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 unsigned char mas[]{
@@ -14,19 +17,60 @@ unsigned char mas[]{
 	0x00, 0x04, 0x13, 0x4d, 0x65, 0x20, 0x3c, 0x6d, 
 	0x65, 0x40, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 
 	0x65, 0x2e, 0x6f, 0x72, 0x67, 0x3e
-
-	
-
 };
-std::string tab="\t";
+std::string oid = "1.3.6.1.4.1.9585.1.0";
 
-void ber_sequence_parse(unsigned char *el,int length, void *value) {
+
+std::string tab="\t";
+std::vector<std::string> split(std::string strToSplit, char delimeter)
+{
+	std::stringstream ss(strToSplit);
+	std::string item;
+	std::vector<std::string> splittedStrings;
+	while (std::getline(ss, item, delimeter))
+	{
+		splittedStrings.push_back(item);
+	}
+	return splittedStrings;
+}
+
+vector<unsigned char> oid_parse(string oid) {
+	uint16_t count = 0;
+	vector<unsigned char> val;
+	if (oid.find("1.3") != 0) return val;
+	oid.replace(0, 3, "43");
+	cout << "OID" << oid;
+
+	vector<std::string> sv = split(oid, '.');
+	std::vector<unsigned char>::iterator it = val.begin();
+	for each (std::string var in sv)
+	{
+		int i=std::stoi(var);
+		if (i > 127) {
+			bool begin=false;
+			while (i > 0) {
+				unsigned char t = (begin?128:0) + (i & 127);
+				begin = true;
+				it=val.insert(it,t);
+				i = i / (pow(2, 7));
+			}
+		}
+		else {
+			val.push_back((unsigned char)i);
+			it = val.end();
+		}
+
+	}
+	return val;
+}
+
+short ber_sequence_parse(unsigned char *el,int length, void **value) {
 	int count = 0;
 	int pos = 0;
-	value =((BER*) malloc(10*sizeof(BER)));
+	*value =((BER*) malloc(10*sizeof(BER)));
 	while (pos<length-1) {
 		BER* b = new BER(el + pos);
-		*((BER*)value+count) = *b;
+		*((BER*)*value +count) = *b;
 		count++;
 		if (count>8)
 		{
@@ -35,11 +79,15 @@ void ber_sequence_parse(unsigned char *el,int length, void *value) {
 		pos += b->length + b->len_offset + 1;
 //		delete b;
 	}
-//	value = (BER*)malloc(count);
+	//value = (BER*)malloc(count);
 	//memcpy(value, bers, count);
-		
-	//delete bers;
-
+	/*for (size_t i = 0; i < count; i++)
+	{
+		//((BER*)bers + i)->CLEAN();
+		((BER*)bers + i)->~BER();
+	}
+	free(bers);*/
+	return count;
 }
 
 /*void getval(unsigned char* el, unsigned char type, unsigned len) {
@@ -163,11 +211,20 @@ void ber_sequence_parse(unsigned char *el,int length, void *value) {
 */
 int main()
 {
-	/*for (size_t i = 0; i < 1000000; i++)
+	for (size_t i = 0; i < 100000; i++)
 	{
-		rec(&mas[0],0,sizeof(mas));
-	}*/
-	BER* ber = new BER(&mas[0]);
+		BER* ber = new BER(&mas[0]);
+		//ber->CLEAN();
+		ber->~BER();
+	}
+	vector<unsigned char> val=oid_parse(oid);
+	cout << endl;
+	for each (unsigned char var in val)
+	{
+		cout << hex << (int)var <<" ";
+	}
+	
+	//BER* ber = new BER(&mas[0]);
 	/*for each (unsigned char i in mas)
 	{
 		cout << (short)i <<endl;
@@ -175,7 +232,6 @@ int main()
 	*/
 	cout << "ok";
 	getchar();
-	delete ber;
     return 0;
 }
 
