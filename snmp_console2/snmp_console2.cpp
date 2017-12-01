@@ -64,20 +64,21 @@ vector<unsigned char> oid_parse(string oid) {
 	return val;
 }
 
-short ber_sequence_parse(unsigned char *el,int length, void *value,std::string tab) {
+short ber_sequence_parse(unsigned char *el,int length, vector<shared_ptr<BER>> value,short lev) {
 	int count = 0;
 	int pos = 0;
-	vector<BER*> bers; 
+	//vector<BER*> bers; 
 	while (pos<length-1) {
 		
-		bers.push_back(new BER(el + pos, tab));
+		std::shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(el + pos, lev));
+		value.push_back(ber);
 		
 		count++;
 		
-		pos += bers.back()->length + bers.back()->len_offset + 1;
+		pos += value.back()->length + value.back()->len_offset + 1;
 		
 	}
-	value = &bers;
+	//value = &bers;
 	return count;
 }
 
@@ -202,11 +203,11 @@ short ber_sequence_parse(unsigned char *el,int length, void *value,std::string t
 */
 int main()
 {
-	for (size_t i = 0; i < 100000; i++)
+	for (size_t i = 0; i < 10000000; i++)
 	{
-		BER* ber = new BER(&mas[0],"\t");
+		std::shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
 		//ber->CLEAN();
-		ber->~BER();
+		//ber->~BER();
 	}
 	vector<unsigned char> val=oid_parse(oid);
 	cout << endl;

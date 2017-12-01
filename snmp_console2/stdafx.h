@@ -8,10 +8,11 @@
 #include "targetver.h"
 
 #include <stdio.h>
+#include <memory>
 #include <tchar.h>
 #include "BER.h"
 #include <iostream>
 using namespace std;
 // TODO: reference additional headers your program requires here
-short ber_sequence_parse(unsigned char *el, int length, void* value,std::string tab);
+short ber_sequence_parse(unsigned char *el, int length,vector<shared_ptr<BER>> value,short tab);
 std::string tab = "\t";
