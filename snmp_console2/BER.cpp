@@ -2,7 +2,7 @@
 
 
 #include "stdafx.h"
-
+BER::BER() {}
 BER::BER(unsigned char* el,short lev) {
 	level= 1+lev;
 	type = *el;
@@ -86,7 +86,6 @@ BER::BER(unsigned char* el,short lev) {
 		break;
 	case 0x43: //cout << tab << "TIMETICKS";
 		break;
-
 	case 0xA0: //cout << tab << "GetRequest"; 
 		break;
 	case 0xA1: //cout << tab << "GetNextRequest";

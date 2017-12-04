@@ -2,32 +2,34 @@
 #include <string>
 #include <memory>
 #include <vector>
-
-#define BER_INTEGER				0xA0;
-#define BER_OCTET_STRING		0xA0;
-#define BER_OBJECT_IDENTIFIER	0xA0;
-#define BER_NULL				0xA0;
-#define BER_SEQUENCE			0xA0;
-#define BER_OBJECT_IDENTIFIER	0xA0;
-#define BER_INTEGER				0xA0;
-#define BER_OCTET_STRING		0xA0;
-#define BER_OBJECT_IDENTIFIER	0xA0;
-#define BER_INTEGER		0xA0;
-#define GETNEXTREQUEST	0xA1;
-#define RESPONSE		0xA2;
-#define SETREQUEST		0xA3;
-#define GETBULKREQUEST	0xA5;
-#define INFORMREQUEST	0xA6;
-#define TRAP			0xA7;
-#define REPORT			0xA8;
-
+enum ber_type {
+	BER_INTEGER	=			0x02,
+	BER_OCTET_STRING=		0x04,
+	BER_OBJECT_IDENTIFIER = 0x06,
+	BER_NULL =				0x05,
+	BER_SEQUENCE =			0x30,
+	BER_IP_ADDRESS =		0x40,
+	BER_COUNTER =			0x41,
+	BER_GAUGE =				0x42,
+	BER_TIMETICKS =			0x43
+};
+enum pdu_type {
+	GETNEXTREQUEST = 0xA1,
+	RESPONSE = 0xA2,
+	SETREQUEST = 0xA3,
+	GETBULKREQUEST = 0xA5,
+	INFORMREQUEST = 0xA6,
+	TRAP = 0xA7,
+	REPORT = 0xA8
+};
  class BER {
  public:
-	 BER(unsigned char* el,short t);
+	 BER();
+	 BER(unsigned char* el, short t);
 	 ~BER();
 	 
 
-	 unsigned char type;
+	 ber_type type;
 	 unsigned length;
 	 short len_offset;
 	 short count;
