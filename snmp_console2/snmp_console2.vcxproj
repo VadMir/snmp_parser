@@ -146,12 +146,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BER.h" />
+    <ClInclude Include="SNMP_PDU.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BER.cpp" />
     <ClCompile Include="snmp_console2.cpp" />
+    <ClCompile Include="SNMP_PDU.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -3,6 +3,24 @@
 #include <memory>
 #include <vector>
 
+#define BER_INTEGER				0xA0;
+#define BER_OCTET_STRING		0xA0;
+#define BER_OBJECT_IDENTIFIER	0xA0;
+#define BER_NULL				0xA0;
+#define BER_SEQUENCE			0xA0;
+#define BER_OBJECT_IDENTIFIER	0xA0;
+#define BER_INTEGER				0xA0;
+#define BER_OCTET_STRING		0xA0;
+#define BER_OBJECT_IDENTIFIER	0xA0;
+#define BER_INTEGER		0xA0;
+#define GETNEXTREQUEST	0xA1;
+#define RESPONSE		0xA2;
+#define SETREQUEST		0xA3;
+#define GETBULKREQUEST	0xA5;
+#define INFORMREQUEST	0xA6;
+#define TRAP			0xA7;
+#define REPORT			0xA8;
+
  class BER {
  public:
 	 BER(unsigned char* el,short t);

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 unsigned char mas[]{
@@ -45,13 +46,13 @@ vector<unsigned char> oid_parse(string oid) {
 	std::vector<unsigned char>::iterator it = val.begin();
 	for each (std::string var in sv)
 	{
-		int i=std::stoi(var);
+		int i = std::stoi(var);
 		if (i > 127) {
-			bool begin=false;
+			bool begin = false;
 			while (i > 0) {
-				unsigned char t = (begin?128:0) + (i & 127);
+				unsigned char t = (begin ? 128 : 0) + (i & 127);
 				begin = true;
-				it=val.insert(it,t);
+				it = val.insert(it, t);
 				i = i / (pow(2, 7));
 			}
 		}
@@ -63,151 +64,58 @@ vector<unsigned char> oid_parse(string oid) {
 	}
 	return val;
 }
+string oidtostr(vector<unsigned char>oid) {
+	vector<unsigned char>::iterator it;// = oid.begin();
+	string out = "";
+	for (it=oid.begin(); it!=oid.end();++it)
+	{
+		string s;
+		if (*it < 128) { s = std::to_string(*it); }
+		else {
+			uint32_t temp=0;
+			while (*it > 127) {
+				cout << hex << temp<<endl;
+				temp = (uint32_t)(temp*(pow(2, 7)));
+				temp+=(*it) & 127;
+				cout << hex << temp << endl;
+				it++;
+			}
+			temp = (uint32_t)(temp*(pow(2, 7)));
+			temp  += (*it) & 127;
+			s = to_string(temp);
+		}
+		out += s + ".";
+	}
+	out.replace(0, 2, "1.3");
+	out.pop_back();
+	return out;
+}
 
-short ber_sequence_parse(unsigned char *el,int length, vector<shared_ptr<BER>> value,short lev) {
+short ber_sequence_parse(unsigned char *el,int length, vector<shared_ptr<BER>> *value,short lev) {
 	int count = 0;
 	int pos = 0;
 	//vector<BER*> bers; 
 	while (pos<length-1) {
 		
 		std::shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(el + pos, lev));
-		value.push_back(ber);
+		value->push_back(ber);
 		
 		count++;
 		
-		pos += value.back()->length + value.back()->len_offset + 1;
+		pos += value->back()->length + value->back()->len_offset + 1;
 		
 	}
 	//value = &bers;
 	return count;
 }
 
-/*void getval(unsigned char* el, unsigned char type, unsigned len) {
 
-	switch (type) {
-	case 0x02: {
-		unsigned char* t = new unsigned char[sizeof(int)];
-		memset(t, 0, sizeof(int));
-		memcpy(t, el, len);
-		reverse(t, t + len);
-
-		//cout << (*(int*)t);
-		delete t;
-		break;
-	}
-	case 0x04: {
-		unsigned char* t = new unsigned char[len+2];
-		memset(t, 0, len+2);
-		memcpy(t, el, len);
-	//	cout << t; 
-
-		//cout << tab << "OCTET STRING";
-		delete t;
-		break; }
-	case 0x06: //cout << tab << "OBJECT IDENTIFIER"; 
-	{
-		unsigned char* t = new unsigned char[len];
-		memset(t, 0, len);
-		memcpy(t, el, len);
-		for (ptrdiff_t  i = 0; i < len; i++)
-		{
-			if ((short)*(t + i) == 0x2b) {
-			//	cout <<  "1.3.";
-			}
-			else {
-			//	cout << (short)*(t + i) << ".";
-			}
-		}
-		delete t;
-		 
-
-	break; }
-	//case 0x05: cout << tab << "NULL"; break;
-	//case 0x30: cout << tab << "SEQUENCE"; break;
-	//case 0x40: cout << tab << "IP ADDRESS"; break;
-	//case 0x41: cout << tab << "COUNTER"; break;
-	//case 0x42: cout << tab << "GAUGE"; break;
-	//case 0x43: cout << tab << "TIMETICKS"; break;
-
-	//case 0xA0: cout << tab << "GetRequest"; break;
-	//case 0xA1: cout << tab << "GetNextRequest"; break;
-	//case 0xA2: cout << tab << "Response"; break;
-	//case 0xA3: cout << tab << "SetRequest"; break;
-	//case 0xA5: cout << tab << "GetBulkRequest"; break;
-	//case 0xA6: cout << tab << "InformRequest"; break;
-	//case 0xA7: cout << tab << "Trap "; break;
-	//case 0xA8: cout << tab << "Report"; break;
-
-	//default: /*cout << tab << "UNKNOWN"; break;
-	}
-}*/
-/*void rec(unsigned char* el,unsigned pos, unsigned size) {
-	if (pos >= size) 
-		return;
-	unsigned length = (unsigned)(*(el + 1));
-	switch (*el) {
-	case 0x02: //cout << tab << "INTEGER" << endl << tab;
-		getval(el+2, *el, length); break; 
-	case 0x04: //cout << tab << "OCTET STRING" << endl << tab; 
-		getval(el + 2, *el, length); break;
-	case 0x06: //cout << tab << "OBJECT IDENTIFIER" << endl << tab;
-		getval(el + 2, *el, length); break;
-	case 0x05: //cout << tab << "NULL"; 
-		break;
-	case 0x30: //cout << tab << "SEQUENCE";
-		break;
-	case 0x40: //cout << tab << "IP ADDRESS"; 
-		break;
-	case 0x41: //cout << tab << "COUNTER"; 
-		break;
-	case 0x42: //cout << tab << "GAUGE"; 
-		break;
-	case 0x43: //cout << tab << "TIMETICKS";
-		break;
-
-	case 0xA0: //cout << tab << "GetRequest"; 
-		break;
-	case 0xA1: //cout << tab << "GetNextRequest";
-		break;
-	case 0xA2: //cout << tab << "Response";
-		break;
-	case 0xA3: //cout << tab << "SetRequest"; 
-		break;
-	case 0xA5: //cout << tab << "GetBulkRequest";
-		break;
-	case 0xA6:// cout << tab << "InformRequest";
-		break;
-	case 0xA7:// cout << tab << "Trap "; 
-		break;
-	case 0xA8: //cout << tab << "Report";
-		break;
-	
-	default:// cout << tab << "UNKNOWN"; 
-		break;
-	}
-
-	//cout  <<endl<<tab<< "LENGTH: "<<hex <<(short)(*(el+1))<<endl<<endl;
-
-	pos += length + 2;
-
-	if (((*el)!=0x30)&&((*el)<0xA0)) rec(el + 2 + length,pos, size);
-	else {
-		tab += "\t";
-		unsigned char *value=new unsigned char[length];
-		memcpy(value, el + 2, length);
-		rec(value, 0, length);
-		delete value;
-	}
-	tab = tab.substr(0, tab.size() - 1);
-}
-*/
 int main()
 {
-	for (size_t i = 0; i < 10000000; i++)
+	for (size_t i = 0; i < 1; i++)
 	{
-		std::shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
-		//ber->CLEAN();
-		//ber->~BER();
+		shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
+	//	SNMP_PDU* pdau = SNMP_PDU::ParseBERtoSNMP_PDU(ber);
 	}
 	vector<unsigned char> val=oid_parse(oid);
 	cout << endl;
@@ -216,12 +124,9 @@ int main()
 		cout << hex << (int)var <<" ";
 	}
 	
-	//BER* ber = new BER(&mas[0]);
-	/*for each (unsigned char i in mas)
-	{
-		cout << (short)i <<endl;
-	}
-	*/
+	cout << endl;
+	cout << oidtostr(val);
+
 	cout << "ok";
 	getchar();
     return 0;

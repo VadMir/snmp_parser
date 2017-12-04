@@ -30,7 +30,7 @@ BER::BER(unsigned char* el,short lev) {
 		//value =unique_ptr<void>(in);
 		
 		delete i;
-		//cout << t << "INTEGER	" << *(int*)value<< endl ;
+		cout  << "INTEGER	" << value_int<< endl ;
 		break;
 	}
 	case 0x04:  
@@ -39,7 +39,7 @@ BER::BER(unsigned char* el,short lev) {
 		memset(value, 0, length + 2);
 		memcpy(value, el+ len_offset+1, length);
 		value_str=string( reinterpret_cast<char*>(value));
-		//cout << t << "OCTET STRING	" << (unsigned char*)value<<endl;
+		cout  << "OCTET STRING	" << (unsigned char*)value<<endl;
 		free(value);
 		break;
 	}
@@ -48,7 +48,7 @@ BER::BER(unsigned char* el,short lev) {
 		//value = (unsigned char*)malloc((length ) * sizeof(unsigned char));
 		//memset(value, 0, length);
 		//memcpy(value, el+ len_offset+1, length);
-		/*cout << t << "OBJECT IDENTIFIER	";*/
+		cout <<  "OBJECT IDENTIFIER	";
 		for (ptrdiff_t i = 0; i < length; i++)
 		{
 			short sh = (short)*((unsigned char*)el + len_offset + 1 + i);
@@ -70,10 +70,10 @@ BER::BER(unsigned char* el,short lev) {
 		break;
 	case 0x30: //cout << tab << "SEQUENCE";
 	{
-		//cout <<t<< "SEQUENCE			" << count << endl;
+		cout << "SEQUENCE			" << count << endl;
 
-		count= ber_sequence_parse(el + len_offset+1,length,value_arr,level);
-		//cout <<t<< "SEQUENCE			" << count << endl;
+		count= ber_sequence_parse(el + len_offset+1,length,&value_arr,level);
+		cout << "SEQUENCE			" << count << endl;
 		break;
 
 		
@@ -93,7 +93,7 @@ BER::BER(unsigned char* el,short lev) {
 		break;
 	case 0xA2: //cout << tab << "Response";
 		//cout << t << "RESPONSE			" << count << endl;
-	//	count = ber_sequence_parse(el + len_offset + 1, length, value,t);
+		count = ber_sequence_parse(el + len_offset + 1, length, &value_arr,level);
 		//cout << t << "RESPONSE			" << count << endl;
 		break;
 	case 0xA3: //cout << tab << "SetRequest"; 
