@@ -20,6 +20,7 @@ unsigned char mas[]{
 	0x65, 0x2e, 0x6f, 0x72, 0x67, 0x3e
 };
 std::string oid = "1.3.6.1.4.1.9585.1.0";
+std::string oid_zam = "1.3.6.1.2.1.1.4.0";
 
 
 //std::string tab="\t";
@@ -34,6 +35,8 @@ std::vector<std::string> split(std::string strToSplit, char delimeter)
 	}
 	return splittedStrings;
 }
+
+
 
 vector<unsigned char> oid_parse(string oid) {
 	uint16_t count = 0;
@@ -114,8 +117,31 @@ int main()
 {
 	for (size_t i = 0; i < 1; i++)
 	{
+		
+
 		shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
 		SNMP_PDU* pdau = SNMP_PDU::ParseBERtoSNMP_PDU(ber);
+
+		vector<unsigned char> vl;
+
+		
+		if (pdau->variable_bindings.find(oid_zam) != pdau->variable_bindings.end()) {
+			cout << pdau->variable_bindings[oid_zam]->value_str<<endl;
+			pdau->variable_bindings[oid_zam]->value_str = "----------------------------------------------------------------------------==-----vmiron-------------------------------------------------------------------------------------------------------ov@mail.ru--------==-----vmironov@mail.ru--------==-------";
+			cout << pdau->variable_bindings[oid_zam]->value_str << endl;
+		}
+		pdau->SNMP_PDUtoBER(&vl);
+		cout << endl;
+
+		for each (unsigned char var in vl)
+		{
+			cout << hex << (int)var << " ";
+		}
+		cout << endl;
+
+		shared_ptr<BER> br = std::shared_ptr<BER>(new BER(vl, 0));
+
+
 	}
 	vector<unsigned char> val=oid_parse(oid);
 	cout << endl;
@@ -128,6 +154,11 @@ int main()
 	cout << oidtostr(val);
 
 	cout << "ok";
+	
+	
+	
+	
+	
 	getchar();
     return 0;
 }

@@ -14,18 +14,19 @@ enum ber_type {
 	BER_TIMETICKS =			0x43
 };
 enum pdu_type {
-	GETNEXTREQUEST = 0xA1,
-	RESPONSE = 0xA2,
-	SETREQUEST = 0xA3,
-	GETBULKREQUEST = 0xA5,
-	INFORMREQUEST = 0xA6,
-	TRAP = 0xA7,
-	REPORT = 0xA8
+	GETNEXTREQUEST =	0xA1,
+	RESPONSE =			0xA2,
+	SETREQUEST =		0xA3,
+	GETBULKREQUEST =	0xA5,
+	INFORMREQUEST =		0xA6,
+	TRAP =				0xA7,
+	REPORT =			0xA8
 };
  class BER {
  public:
 	 BER();
 	 BER(unsigned char* el, short t);
+	 BER(vector<unsigned char> el, short t);
 	 ~BER();
 	 
 
@@ -40,6 +41,9 @@ enum pdu_type {
 	 std::vector<unsigned char> value_oid;
 	 uint32_t value_int;
 	 std::string value_str;
+	 static void stamp_BER_length(vector<unsigned char>*vec, uint32_t len);
+	 static void BER_insert_integer(vector<unsigned char>*vec, uint32_t len, ber_type type);
+	 static void BER_insert_octet_string(vector<unsigned char>*vec, string str);
 
  };
 

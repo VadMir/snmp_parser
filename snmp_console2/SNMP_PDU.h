@@ -2,7 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #include "BER.h"
 
@@ -38,7 +38,7 @@ class SNMP_PDU {
 	uint32_t error_status;
 	uint32_t error_index;
 	
-	std::map<std::string, std::shared_ptr<BER>>variable_bindings;
+	std::unordered_map<std::string, std::shared_ptr<BER>>variable_bindings;
 
 
 	static SNMP_PDU* SNMP_PDU::ParseBERtoSNMP_PDU(std::shared_ptr<BER>);
