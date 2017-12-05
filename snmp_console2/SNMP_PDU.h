@@ -42,4 +42,5 @@ class SNMP_PDU {
 
 
 	static SNMP_PDU* SNMP_PDU::ParseBERtoSNMP_PDU(std::shared_ptr<BER>);
+	void SNMP_PDU::SNMP_PDUtoBER(std::vector<unsigned char> *vector);
 };

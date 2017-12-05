@@ -115,7 +115,7 @@ int main()
 	for (size_t i = 0; i < 1; i++)
 	{
 		shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
-	
+		SNMP_PDU* pdau = SNMP_PDU::ParseBERtoSNMP_PDU(ber);
 	}
 	vector<unsigned char> val=oid_parse(oid);
 	cout << endl;
