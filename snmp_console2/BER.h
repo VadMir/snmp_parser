@@ -1,7 +1,12 @@
 #pragma once
+
+#ifndef BER_H
+#define BER_H
+
 #include <string>
 #include <memory>
 #include <vector>
+using namespace std;
 enum ber_type {
 	BER_INTEGER	=			0x02,
 	BER_OCTET_STRING=		0x04,
@@ -25,25 +30,29 @@ enum pdu_type {
  class BER {
  public:
 	 BER();
-	 BER(unsigned char* el, short t);
-	 BER(vector<unsigned char> el, short t);
+	 BER(guint8 const* el, short t);
+	 BER(std::vector<guint8> el, short t);
 	 ~BER();
 	 
 
 	 ber_type type;
 	 unsigned length;
 	 short len_offset;
-	 short count;
+	 //short count;
 
 	 short level;
 
 	 std::vector<std::shared_ptr<BER>> value_arr;
-	 std::vector<unsigned char> value_oid;
+	 std::vector<guint8> value_oid;
 	 uint32_t value_int;
 	 std::string value_str;
-	 static void stamp_BER_length(vector<unsigned char>*vec, uint32_t len);
-	 static void BER_insert_integer(vector<unsigned char>*vec, uint32_t len, ber_type type);
-	 static void BER_insert_octet_string(vector<unsigned char>*vec, string str);
+	 static void stamp_BER_length(std::vector<guint8>*vec, uint32_t len);
+	 static void BER_insert_integer(std::vector<guint8>*vec, uint32_t len, ber_type type);
+	 static void BER_insert_octet_string(std::vector<guint8>*vec, string str);
+	 static short BER::ber_sequence_parse(const guint8 *el, int length, vector<shared_ptr<BER>> *value, short lev);
+	 static uint32_t getLength(vector<guint8>*vec);
+	
 
  };
 
+#endif

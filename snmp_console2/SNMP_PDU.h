@@ -1,21 +1,16 @@
 #pragma once
+
+#ifndef SNMP_PDU_H
+#define SNMP_PDU_H
+
 #include <string>
 #include <memory>
 #include <vector>
 #include <unordered_map>
 
-#include "BER.h"
-
 typedef uint32_t PDUType;
 
-#define GETREQUEST		0xA0;
-#define GETNEXTREQUEST	0xA1;
-#define RESPONSE		0xA2;
-#define SETREQUEST		0xA3;
-#define GETBULKREQUEST	0xA5;
-#define INFORMREQUEST	0xA6;
-#define TRAP			0xA7;
-#define REPORT			0xA8;
+
 
 #define noError		0		//Нет ошибки
 #define	TooBig		1		//Слишком большой ответ для размещения в одном сообщении
@@ -42,5 +37,10 @@ class SNMP_PDU {
 
 
 	static SNMP_PDU* SNMP_PDU::ParseBERtoSNMP_PDU(std::shared_ptr<BER>);
-	void SNMP_PDU::SNMP_PDUtoBER(std::vector<unsigned char> *vector);
+	void SNMP_PDU::SNMP_PDUtoBER(std::vector<guint8> *vector);
+	static string SNMP_PDU::oidtostr(vector<guint8>oid);
+	static vector<guint8> SNMP_PDU::oid_parse(string oid);
+	static std::vector<std::string> SNMP_PDU::split(std::string strToSplit, char delimeter);
 };
+
+#endif

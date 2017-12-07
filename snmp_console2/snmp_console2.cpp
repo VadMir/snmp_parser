@@ -1,15 +1,11 @@
 // snmp_console2.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <cmath>
+#include "module.hpp"
+
 
 using namespace std;
-unsigned char mas[]{
+ /*unsigned char mas[]{
 	0x30, 0x3c, 0x02, 0x01, 0x01, 0x04, 0x06, 0x70, 
 	0x75, 0x62, 0x6c, 0x69, 0x63, 0xa2, 0x2f, 0x02, 
 	0x04, 0x67, 0x91, 0x77, 0xf5, 0x02, 0x01, 0x00, 
@@ -18,6 +14,14 @@ unsigned char mas[]{
 	0x00, 0x04, 0x13, 0x4d, 0x65, 0x20, 0x3c, 0x6d, 
 	0x65, 0x40, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 
 	0x65, 0x2e, 0x6f, 0x72, 0x67, 0x3e
+};*/
+unsigned char mas[]{
+	0x30, 0x28, 0x02, 0x01, 0x00, 0x04, 0x06, 0x70, 
+	0x75, 0x62, 0x6c, 0x69, 0x63, 0xa0, 0x1b, 0x02,
+	0x03, 0x35, 0xd3, 0x9a, 0x02, 0x01, 0x00, 0x02,
+	0x01, 0x00, 0x30, 0x0e, 0x30, 0x0c, 0x06, 0x08,
+	0x2b, 0x06, 0x01, 0x02, 0x01, 0x01, 0x04, 0x00, 
+	0x05, 0x00
 };
 std::string oid = "1.3.6.1.4.1.9585.1.0";
 std::string oid_zam = "1.3.6.1.2.1.1.4.0";
@@ -43,7 +47,7 @@ vector<unsigned char> oid_parse(string oid) {
 	vector<unsigned char> val;
 	if (oid.find("1.3") != 0) return val;
 	oid.replace(0, 3, "43");
-	cout << "OID" << oid;
+	//cout << "OID" << oid;
 
 	vector<std::string> sv = split(oid, '.');
 	std::vector<unsigned char>::iterator it = val.begin();
@@ -77,10 +81,10 @@ string oidtostr(vector<unsigned char>oid) {
 		else {
 			uint32_t temp=0;
 			while (*it > 127) {
-				cout << hex << temp<<endl;
+				//cout << hex << temp<<endl;
 				temp = (uint32_t)(temp*(pow(2, 7)));
 				temp+=(*it) & 127;
-				cout << hex << temp << endl;
+				//cout << hex << temp << endl;
 				it++;
 			}
 			temp = (uint32_t)(temp*(pow(2, 7)));
@@ -120,17 +124,23 @@ int main()
 		
 
 		shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
-		SNMP_PDU* pdau = SNMP_PDU::ParseBERtoSNMP_PDU(ber);
-
-		vector<unsigned char> vl;
-
+	
 		
+		
+		shared_ptr<SNMP_PDU> pdau = shared_ptr<SNMP_PDU>(SNMP_PDU::ParseBERtoSNMP_PDU(ber));
 		if (pdau->variable_bindings.find(oid_zam) != pdau->variable_bindings.end()) {
 			cout << pdau->variable_bindings[oid_zam]->value_str<<endl;
-			pdau->variable_bindings[oid_zam]->value_str = "----------------------------------------------------------------------------==-----vmiron-------------------------------------------------------------------------------------------------------ov@mail.ru--------==-----vmironov@mail.ru--------==-------";
+			pdau->variable_bindings[oid_zam]->value_str = "-nov@mail.ru---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------==-------";
+			pdau->variable_bindings[oid_zam]->type = BER_OCTET_STRING;
+
 			cout << pdau->variable_bindings[oid_zam]->value_str << endl;
 		}
+		
+		
+		vector<unsigned char> vl;
 		pdau->SNMP_PDUtoBER(&vl);
+
+		
 		cout << endl;
 
 		for each (unsigned char var in vl)
@@ -139,7 +149,8 @@ int main()
 		}
 		cout << endl;
 
-		shared_ptr<BER> br = std::shared_ptr<BER>(new BER(vl, 0));
+
+			shared_ptr<BER> br = std::shared_ptr<BER>(new BER(vl, 0));
 
 
 	}
