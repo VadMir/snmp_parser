@@ -19,7 +19,8 @@ enum ber_type {
 	BER_TIMETICKS =			0x43
 };
 enum pdu_type {
-	GETNEXTREQUEST =	0xA1,
+	GETREQUEST = 0xA0,
+	GETNEXTREQUEST = 0xA1,
 	RESPONSE =			0xA2,
 	SETREQUEST =		0xA3,
 	GETBULKREQUEST =	0xA5,

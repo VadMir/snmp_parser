@@ -111,14 +111,14 @@ void SNMP_PDU::SNMP_PDUtoBER(vector<guint8> *vec) {
 
 	//Community
 	BER::BER_insert_octet_string(vec, community);
-/*
+
 	//SNMP version
 	BER::BER_insert_integer(vec, version, BER_INTEGER);
 
 	//PDU
-	BER::stamp_BER_length(vec, getLength(vec));
+	BER::stamp_BER_length(vec, BER::getLength(vec));
 	vec->insert(vec->begin(), BER_SEQUENCE);
-	*/
+	
 }
 string SNMP_PDU::oidtostr(vector<guint8>oid) {
 	vector<guint8>::iterator it;// = oid.begin();
