@@ -1,40 +1,34 @@
-========================================================================
-    CONSOLE APPLICATION : snmp_console2 Project Overview
-========================================================================
-
-AppWizard has created this snmp_console2 application for you.
-
-This file contains a summary of what you will find in each of the files that
-make up your snmp_console2 application.
 
 
-snmp_console2.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+Это парсер для PDU в формате Basic Encoding Rules (BER X.690) применительно к протоколу SNMP (v1/2c)
+***
+Проект пример создан в Visual Studio 2015
+***
+Пример использования парсера:
+***
+'''
+///
+unsigned char buf[]{
+	0x30, 0x3c, 0x02, 0x01, 0x01, 0x04, 0x06, 0x70, 
+	0x75, 0x62, 0x6c, 0x69, 0x63, 0xa2, 0x2f, 0x02, 
+	0x04, 0x67, 0x91, 0x77, 0xf5, 0x02, 0x01, 0x00, 
+	0x02, 0x01, 0x00, 0x30, 0x21, 0x30, 0x1f, 0x06, 
+	0x08, 0x2b, 0x06, 0x01, 0x02, 0x01, 0x01, 0x04, 
+	0x00, 0x04, 0x13, 0x4d, 0x65, 0x20, 0x3c, 0x6d, 
+	0x65, 0x40, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 
+	0x65, 0x2e, 0x6f, 0x72, 0x67, 0x3e
+};
+///
 
-snmp_console2.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&buf[0],0));
+shared_ptr<SNMP_PDU> pdu = shared_ptr<SNMP_PDU>(SNMP_PDU::ParseBERtoSNMP_PDU(ber));
 
-snmp_console2.cpp
-    This is the main application source file.
+vector<unsigned char> vl;
+pdu->SNMP_PDUtoBER(&vl);
+shared_ptr<BER> br = std::shared_ptr<BER>(new BER(vl, 0));
+///
+'''	
 
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
+Коструктор BER формирует цепочку вложенных BER-объектов различного типа.
 
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named snmp_console2.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+Функция SNMP_PDU::ParseBERtoSNMP_PDU формирует DOM SNMP_PDU.

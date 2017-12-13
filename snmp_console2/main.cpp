@@ -4,7 +4,8 @@
 #include "module.hpp"
 
 using namespace std;
- unsigned char mas[]{
+
+ unsigned char buf[]{
 	0x30, 0x3c, 0x02, 0x01, 0x01, 0x04, 0x06, 0x70, 
 	0x75, 0x62, 0x6c, 0x69, 0x63, 0xa2, 0x2f, 0x02, 
 	0x04, 0x67, 0x91, 0x77, 0xf5, 0x02, 0x01, 0x00, 
@@ -16,108 +17,20 @@ using namespace std;
 };
 
 
-std::vector<std::string> split(std::string strToSplit, char delimeter)
-{
-	std::stringstream ss(strToSplit);
-	std::string item;
-	std::vector<std::string> splittedStrings;
-	while (std::getline(ss, item, delimeter))
-	{
-		splittedStrings.push_back(item);
-	}
-	return splittedStrings;
-}
-
-
-
-vector<unsigned char> oid_parse(string oid) {
-	uint16_t count = 0;
-	vector<unsigned char> val;
-	if (oid.find("1.3") != 0) return val;
-	oid.replace(0, 3, "43");
-
-	vector<std::string> sv = split(oid, '.');
-	std::vector<unsigned char>::iterator it = val.begin();
-	for each (std::string var in sv)
-	{
-		int i = std::stoi(var);
-		if (i > 127) {
-			bool begin = false;
-			while (i > 0) {
-				unsigned char t = (begin ? 128 : 0) + (i & 127);
-				begin = true;
-				it = val.insert(it, t);
-				i = i / (pow(2, 7));
-			}
-		}
-		else {
-			val.push_back((unsigned char)i);
-			it = val.end();
-		}
-
-	}
-	return val;
-}
-string oidtostr(vector<unsigned char>oid) {
-	vector<unsigned char>::iterator it;
-	string out = "";
-	for (it=oid.begin(); it!=oid.end();++it)
-	{
-		string s;
-		if (*it < 128) { s = std::to_string(*it); }
-		else {
-			uint32_t temp=0;
-			while (*it > 127) {
-				temp = (uint32_t)(temp*(pow(2, 7)));
-				temp+=(*it) & 127;
-				it++;
-			}
-			temp = (uint32_t)(temp*(pow(2, 7)));
-			temp  += (*it) & 127;
-			s = to_string(temp);
-		}
-		out += s + ".";
-	}
-	out.replace(0, 2, "1.3");
-	out.pop_back();
-	return out;
-}
-
-short ber_sequence_parse(unsigned char *el,int length, vector<shared_ptr<BER>> *value,short lev) {
-	int count = 0;
-	int pos = 0;
-	while (pos<length-1) {
-		
-		std::shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(el + pos, lev));
-		value->push_back(ber);
-		
-		count++;
-		
-		pos += value->back()->length + value->back()->len_offset + 1;
-		
-	}
-	return count;
-}
-
-
 int main()
 {
 	for (size_t i = 0; i < 1; i++)
 	{
-		shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&mas[0],0));
-		shared_ptr<SNMP_PDU> pdau = shared_ptr<SNMP_PDU>(SNMP_PDU::ParseBERtoSNMP_PDU(ber));
+		shared_ptr<BER> ber = std::shared_ptr<BER>(new BER(&buf[0],0));
+		shared_ptr<SNMP_PDU> pdu = shared_ptr<SNMP_PDU>(SNMP_PDU::ParseBERtoSNMP_PDU(ber));
 		
 		vector<unsigned char> vl;
-		pdau->SNMP_PDUtoBER(&vl);
+		pdu->SNMP_PDUtoBER(&vl);
 		shared_ptr<BER> br = std::shared_ptr<BER>(new BER(vl, 0));
 	}
 	
 	cout << endl;
 	cout << "ok";
-	
-	
-	
-	
 	
 	getchar();
     return 0;

@@ -186,3 +186,28 @@ std::vector<std::string> SNMP_PDU::split(std::string strToSplit, char delimeter)
 	}
 	return splittedStrings;
 }
+
+string oidtostr(vector<unsigned char>oid) {
+	vector<unsigned char>::iterator it;
+	string out = "";
+	for (it = oid.begin(); it != oid.end(); ++it)
+	{
+		string s;
+		if (*it < 128) { s = std::to_string(*it); }
+		else {
+			uint32_t temp = 0;
+			while (*it > 127) {
+				temp = (uint32_t)(temp*(pow(2, 7)));
+				temp += (*it) & 127;
+				it++;
+			}
+			temp = (uint32_t)(temp*(pow(2, 7)));
+			temp += (*it) & 127;
+			s = to_string(temp);
+		}
+		out += s + ".";
+	}
+	out.replace(0, 2, "1.3");
+	out.pop_back();
+	return out;
+}
