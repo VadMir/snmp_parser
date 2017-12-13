@@ -1,12 +1,13 @@
 
 
-Это парсер для PDU в формате Basic Encoding Rules (BER X.690) применительно к протоколу SNMP (v1/2c)
+This is a parser for PDU in Basic Encoding Rules format (BER X.690), which is used for encoding SNMP (v1/2c)
 ***
-Проект пример создан в Visual Studio 2015
+The example project created in Visual Studio 2015
 ***
-Пример использования парсера:
+
+Example usage of the parser:
 ***
-'''
+```
 ///
 unsigned char buf[]{
 	0x30, 0x3c, 0x02, 0x01, 0x01, 0x04, 0x06, 0x70, 
@@ -27,8 +28,8 @@ vector<unsigned char> vl;
 pdu->SNMP_PDUtoBER(&vl);
 shared_ptr<BER> br = std::shared_ptr<BER>(new BER(vl, 0));
 ///
-'''	
+```	
 
-Коструктор BER формирует цепочку вложенных BER-объектов различного типа.
+The BER-constructor creates the chain of nested BER-objects of various types.
 
-Функция SNMP_PDU::ParseBERtoSNMP_PDU формирует DOM SNMP_PDU.
+Function SNMP_PDU::ParseBERtoSNMP_PDU generates DOM SNMP_PDU.
